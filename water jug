@@ -1,0 +1,30 @@
+from collections import deque
+def water_jug(j1, j2, target):
+    visited = set()
+    queue = deque([(0, 0, [])])
+    while queue:
+        a, b, steps = queue.popleft()
+        if a == target or b == target:
+            for s in steps: print(s)
+            print(f"Result: Jug1={a}, Jug2={b}")
+            return
+        if (a, b) in visited:
+            continue
+        visited.add((a, b))
+        queue.extend([
+            (j1, b, steps + [f"Fill Jug1"]),
+            (a, j2, steps + [f"Fill Jug2"]),
+            (0, b, steps + [f"Empty Jug1"]),
+            (a, 0, steps + [f"Empty Jug2"]),
+            (a - min(a, j2 - b), b + min(a, j2 - b), steps + [f"Pour Jug1->Jug2"]),
+            (a + min(b, j1 - a), b - min(b, j1 - a), steps + [f"Pour Jug2->Jug1"])
+        ])
+    print("No solution")
+if __name__ == "__main__":
+    jug1 = int(input("Jug1 capacity: "))
+    jug2 = int(input("Jug2 capacity: "))
+    target = int(input("Target amount: "))
+    if target > max(jug1, jug2):
+        print("Target too large")
+    else:
+        water_jug(jug1, jug2, target)
