@@ -1,22 +1,14 @@
 def solve(n):
-    def is_safe(qs, row, col):
-        return all(qs[i] != col and abs(qs[i] - col) != row - i for i in range(row))
-    def backtrack(row):
-        if row == n:
-            print_board(queens)
-            return True
-        for col in range(n):
-            if is_safe(queens, row, col):
-                queens[row] = col
-                if backtrack(row + 1):
-                    return True
+    def safe(q, r, c): return all(q[i] != c and abs(q[i]-c) != r-i for i in range(r))
+    def bt(r):
+        if r == n:
+            for i in range(n): print(" ".join("Q" if q[i]==j else "." for j in range(n)))
+            print(f"Number of queens placed: {n}"); return True
+        for c in range(n):
+            if safe(q, r, c): q[r] = c
+            if safe(q, r, c) and bt(r+1): return True
         return False
-    def print_board(qs):
-        for i in range(n):
-            print(" ".join("Q" if qs[i] == j else "." for j in range(n)))
-        print(f"Number of queens placed: {n}")
-    queens = [-1] * n
-    if not backtrack(0):
-        print("No solution found.")
+    q = [-1]*n
+    if not bt(0): print("No solution found.")
 n = int(input("Enter number of queens (N): "))
 solve(n)
