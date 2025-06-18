@@ -1,0 +1,26 @@
+from collections import deque
+def valid(m, c):
+    return 0 <= m <= 3 and 0 <= c <= 3 and (m == 0 or m >= c) and (3 - m == 0 or 3 - m >= 3 - c)
+def moves(state):
+    m, c, b = state
+    candidates = [(2,0),(0,2),(1,0),(0,1),(1,1)]
+    for dm, dc in candidates:
+        if b == 1:
+            nm, nc, nb = m - dm, c - dc, 0
+        else:
+            nm, nc, nb = m + dm, c + dc, 1
+        if valid(nm, nc):
+            yield (nm, nc, nb)
+def bfs():
+    start, goal = (3,3,1), (0,0,0)
+    queue, visited = deque([(start, [start])]), {start}
+    while queue:
+        state, path = queue.popleft()
+        if state == goal:
+            return path
+        for nxt in moves(state):
+            if nxt not in visited:
+                visited.add(nxt)
+                queue.append((nxt, path + [nxt]))
+for i, s in enumerate(bfs()):
+    print(f"Step {i}: Missionaries={s[0]}, Cannibals={s[1]}, Boat={'Left' if s[2] else 'Right'}")
