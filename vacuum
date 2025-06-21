@@ -1,0 +1,13 @@
+def vacuum(location, state):
+    print(f"Initial State: Location = {location}, State = {state}")
+    if state[location] == "Dirty":
+        print(f"Cleaning {location}...")
+        state[location] = "Clean"
+    other = "B" if location == "A" else "A"
+    print(f"Moving to {other}...")
+    if state[other] == "Dirty":
+        print(f"Cleaning {other}...")
+        state[other] = "Clean"
+
+    print(f"Final State: {state}")
+vacuum("A", {"A": "Dirty", "B": "Dirty"})
