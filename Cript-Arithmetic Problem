@@ -1,41 +1,23 @@
 from itertools import permutations
-def solve_cryptarithmetic(puzzle):
-    # Normalize input
-    puzzle = puzzle.replace("=", "==").replace("+", " + ").replace("==", " == ")
-    tokens = puzzle.split()
-    words = [token for token in tokens if token.isalpha()]
-    letters = set(''.join(words))
-    if len(letters) > 10:
-        return None
-    first_letters = set(word[0] for word in words)
-    letters = list(letters)
+
+def solve(puzzle):
+    puzzle = puzzle.replace("==", "=")
+    words = puzzle.replace('+', ' ').replace('=', ' ').split()
+    letters = sorted(set(''.join(words)))
+    if len(letters) > 10: return print("Too many letters")
+
+    first_letters = {w[0] for w in words}
 
     for perm in permutations(range(10), len(letters)):
         mapping = dict(zip(letters, perm))
-        if any(mapping[ch] == 0 for ch in first_letters):
-            continue
-        expr = ""
-        for token in tokens:
-            if token.isalpha():
-                number = ''.join(str(mapping[char]) for char in token)
-                expr += number + " "
-            else:
-                expr += token + " "
+        if any(mapping[c] == 0 for c in first_letters): continue
+        expr = puzzle
+        for c in mapping: expr = expr.replace(c, str(mapping[c]))
+        if eval(expr.replace('=', '==')):
+            print("Solution found:")
+            print(mapping)
+            print(expr.replace('=', '=='))
+            return
+    print("No solution exists.")
 
-        try:
-            if eval(expr.strip()):
-                return mapping
-        except:
-            continue
-    return None
-puzzle_input = input("Enter a cryptarithmetic puzzle (e.g., SEND + MORE = MONEY): ").replace(" ", "")
-mapping = solve_cryptarithmetic(puzzle_input)
-if mapping:
-    print("Solution found:")
-    print(mapping)
-    solved_expr = puzzle_input
-    for k, v in mapping.items():
-        solved_expr = solved_expr.replace(k, str(v))
-    print("Evaluated expression:", solved_expr)
-else:
-    print("No solution found.")
+solve("SEND + MORE == MONEY")
